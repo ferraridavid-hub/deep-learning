@@ -1,10 +1,11 @@
 #include<stdio.h>
 #include<stdbool.h>
 #include<stdlib.h>
+#include<math.h>
 
 
-#define LEARNING_RATE .5
-#define TRAINING_SET_SIZE 10196 * 4
+#define LEARNING_RATE .3
+#define TRAINING_SET_SIZE 10000000
 
 
 typedef struct {
@@ -27,8 +28,8 @@ void init_random_training_set(TrainingSet* ts, size_t size, int seed) {
    ts->size = size;
 
    for (size_t i = 0; i < size; i++) {
-       ts->input[i] = (double) rand() / RAND_MAX * 30.0;
-       ts->labels[i] = ts->input[i] >= 18.0;
+       ts->input[i] = (double) rand() / RAND_MAX * 110.0;
+       ts->labels[i] = ts->input[i] >= 66.0;
    }
 }
 
@@ -58,15 +59,25 @@ void train_perceptron(Perceptron* perceptron, TrainingSet* ts) {
     size_t ts_size = ts->size;
 
     for(size_t i = 0; i < ts_size; i++) {
-        double y = (perceptron->weight * input[i] + perceptron->bias) > 0;        
+        double y = (perceptron->weight * input[i] + perceptron->bias) >= 0;        
         perceptron->weight = perceptron->weight + LEARNING_RATE * (labels[i] - y) * input[i];
         perceptron->bias = perceptron->bias + LEARNING_RATE * (labels[i] - y);
     }
+
+    double threshold = round(- perceptron->bias / perceptron->weight);
+    perceptron->weight = - perceptron->bias / threshold;
+
 }
 
 
 bool predict_perceptron(Perceptron* perceptron, double grade) {
-    return (perceptron->weight * grade + perceptron->bias) > 0;
+    double result = perceptron->weight * grade + perceptron->bias;
+    return result >= 0;
+}
+
+
+void print_perceptron(Perceptron* perceptron) {
+    printf("Perceptron:\n\tweight: %f\n\tbias: %f\n\tthreshold: %f\n", perceptron->weight, perceptron->bias, -perceptron->bias / perceptron->weight);
 }
 
 
@@ -76,24 +87,37 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    double grade = atof(argv[1]);
-
     TrainingSet training_set;
     init_random_training_set(&training_set, TRAINING_SET_SIZE, 42);
-    //print_training_set(&training_set);
 
     Perceptron perceptron;
     init_perceptron(&perceptron);
     train_perceptron(&perceptron, &training_set);
     free_training_set(&training_set);
 
-    bool passed = predict_perceptron(&perceptron, grade);
+    print_perceptron(&perceptron);
 
-    if (passed) {
-        printf("Passed\n");
-    } else {
-        printf("Not passed\n");
-    }    
+    bool* prevs = (bool*) malloc (sizeof(bool) * (argc - 1));
+    int k = 0;
+
+    while (--argc > 0) {
+
+        double grade = atof(*(++argv));
+        bool passed = predict_perceptron(&perceptron, grade);
+        prevs[k++] = passed;
+    }
+
+    for (int i = 0; i < k; i++) {
+        printf("%d", prevs[i]);
+        if (i != k - 1) {
+            putchar(' ');
+        }
+    }
+
+    putchar('\n');
+
+    free(prevs);
 
     return EXIT_SUCCESS;
+
 }
