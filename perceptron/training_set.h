@@ -1,6 +1,7 @@
 #ifndef TRAINING_SET_H
 #define TRAINING_SET_H
 
+#include<stdio.h>
 #include<stdbool.h>
 #include<stdlib.h>
 
@@ -12,6 +13,7 @@ typedef struct {
 } TrainingSet;
 
 
+void print_training_set(TrainingSet* ts);
 void free_training_set(TrainingSet* ts);
 
 
