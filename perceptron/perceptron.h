@@ -1,6 +1,7 @@
 #ifndef PERCEPTRON_H
 #define PERCEPTRON_H
 
+#include<stdio.h>
 #include <stdbool.h>
 #include <math.h>
 
@@ -10,15 +11,17 @@
 
 
 typedef struct {
-    double weight;
+    double* weight;
     double bias;
+    size_t n_features;
 } Perceptron;
 
 
 void init_perceptron(Perceptron*);
 void train_perceptron(Perceptron*, TrainingSet*);
-bool predict_perceptron(Perceptron*, double test);
+bool predict_perceptron(Perceptron*, double* input);
 void print_perceptron(Perceptron*);
+void free_perceptron(Perceptron*);
 
 
 #endif

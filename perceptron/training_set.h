@@ -5,8 +5,9 @@
 #include<stdlib.h>
 
 typedef struct {
-    double* input;
+    double** input;
     bool* labels;
+    size_t features;
     size_t size;
 } TrainingSet;
 

@@ -12,13 +12,20 @@
 
 void init_random_training_set(TrainingSet* ts, size_t size, int seed) {
    srand(seed); 
-   ts->input = (double*)malloc(sizeof(double) * size);
+   ts->input = (double**)malloc(sizeof(double*) * size);
+   for (size_t i = 0; i < size; i++) {
+    ts->input[i] = (double*)malloc(sizeof(double));
+   }
+
    ts->labels = (bool*)malloc(sizeof(bool) * size);
+
+   ts->features = 1;
+
    ts->size = size;
 
    for (size_t i = 0; i < size; i++) {
-       ts->input[i] = (double) rand() / RAND_MAX * 30.0;
-       ts->labels[i] = ts->input[i] >= 18.0;
+       ts->input[i][0] = (double) rand() / RAND_MAX * 30.0;
+       ts->labels[i] = ts->input[i][0] >= 18.0;
    }
 }
 
@@ -34,7 +41,9 @@ int main(int argc, char *argv[]) {
 
     Perceptron perceptron;
     init_perceptron(&perceptron);
+
     train_perceptron(&perceptron, &training_set);
+
     free_training_set(&training_set);
 
     print_perceptron(&perceptron);
@@ -45,7 +54,8 @@ int main(int argc, char *argv[]) {
     while (--argc > 0) {
 
         double grade = atof(*(++argv));
-        bool passed = predict_perceptron(&perceptron, grade);
+        double input[] = {grade};
+        bool passed = predict_perceptron(&perceptron, input);
         prevs[k++] = passed;
     }
 
@@ -55,10 +65,11 @@ int main(int argc, char *argv[]) {
             putchar(' ');
         }
     }
-
     putchar('\n');
 
     free(prevs);
+
+    free_perceptron(&perceptron);
 
     return EXIT_SUCCESS;
 
