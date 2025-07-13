@@ -3,7 +3,7 @@
 #include<stdlib.h>
 #include<math.h>
 
-#include "perceptron.h"
+#include "tlu_neuron.h"
 #include "training_set.h"
 
 
@@ -56,14 +56,14 @@ int main(int argc, char *argv[]) {
     print_training_set(&training_set);
 
 
-    Perceptron perceptron;
-    init_perceptron(&perceptron);
+    TluNeuron perceptron;
+    init_tlu(&perceptron);
 
-    train_perceptron(&perceptron, &training_set);
+    train_tlu(&perceptron, &training_set);
 
     free_training_set(&training_set);
 
-    print_perceptron(&perceptron);
+    print_tlu(&perceptron);
 
     bool* prevs = (bool*) malloc (sizeof(bool) * (argc - 1));
     int k = 0;
@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
         double x = atof(*(++argv));
         double y = atof(*(++argv));
         double input[] = {x, y};
-        bool passed = predict_perceptron(&perceptron, input);
+        bool passed = predict_tlu(&perceptron, input);
         prevs[k++] = passed;
 
         argc -= 2;
@@ -89,7 +89,7 @@ int main(int argc, char *argv[]) {
 
     free(prevs);
 
-    free_perceptron(&perceptron);
+    free_neuron(&perceptron);
 
     return EXIT_SUCCESS;
 
