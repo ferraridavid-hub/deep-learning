@@ -10,24 +10,38 @@
 #define TRAINING_SET_SIZE 10000000
 
 
-void init_random_training_set(TrainingSet* ts, size_t size, int seed) {
+void init_random_training_set(TrainingSet* ts, int seed) {
    srand(seed); 
-   ts->input = (double**)malloc(sizeof(double*) * size);
-   for (size_t i = 0; i < size; i++) {
-    ts->input[i] = (double*)malloc(sizeof(double));
+   ts->input = (double**)malloc(sizeof(double*) * TRAINING_SET_SIZE);
+   for (size_t i = 0; i < TRAINING_SET_SIZE; i++) {
+    ts->input[i] = (double*)malloc(sizeof(double) * 2);
    }
 
-   ts->labels = (bool*)malloc(sizeof(bool) * size);
+   ts->labels = (bool*)malloc(sizeof(bool) * TRAINING_SET_SIZE);
 
-   ts->features = 1;
+   ts->features = 2;
 
-   ts->size = size;
+   ts->size = TRAINING_SET_SIZE;
 
-   for (size_t i = 0; i < size; i++) {
-       ts->input[i][0] = (double) rand() / RAND_MAX * 30.0;
-       ts->labels[i] = ts->input[i][0] >= 18.0;
+   for (size_t i = 0; i < TRAINING_SET_SIZE; i++) {
+       double r = (double)rand() / RAND_MAX;
+       if (r < 0.5) {
+           r *= 10;
+       } else {
+           r = 10 + 5 * r;
+       }
+
+       double theta = (double)rand() / RAND_MAX * 2 * M_PI;
+
+       //ts->input[i][0] = r * sin(theta);
+       //ts->input[i][1] = r * cos(theta);
+       ts->input[i][0] = r;
+       ts->input[i][1] = theta;
+
+       ts->labels[i] = r <= 10; 
    }
 }
+
 
 
 int main(int argc, char *argv[]) {
@@ -37,7 +51,10 @@ int main(int argc, char *argv[]) {
     }
 
     TrainingSet training_set;
-    init_random_training_set(&training_set, TRAINING_SET_SIZE, 42);
+    init_random_training_set(&training_set, 42);
+    
+    print_training_set(&training_set);
+
 
     Perceptron perceptron;
     init_perceptron(&perceptron);
@@ -53,10 +70,13 @@ int main(int argc, char *argv[]) {
 
     while (--argc > 0) {
 
-        double grade = atof(*(++argv));
-        double input[] = {grade};
+        double x = atof(*(++argv));
+        double y = atof(*(++argv));
+        double input[] = {x, y};
         bool passed = predict_perceptron(&perceptron, input);
         prevs[k++] = passed;
+
+        argc -= 2;
     }
 
     for (int i = 0; i < k; i++) {
