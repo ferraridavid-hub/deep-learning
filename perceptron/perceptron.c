@@ -46,7 +46,7 @@ bool predict_perceptron(Perceptron* perceptron, double* input) {
 
 
 void print_perceptron(Perceptron* perceptron) {
-    printf("Perceptron:\n\tweight: %f\n\tbias: %f\n\tthreshold: %f\n", perceptron->weight[0], perceptron->bias, -perceptron->bias / perceptron->weight[0]);
+    printf("Perceptron:\n\tweights: w1: %f\tw2: %f\n\tbias: %f\n", perceptron->weight[0], perceptron->weight[1], perceptron->bias);
 }
 
 
