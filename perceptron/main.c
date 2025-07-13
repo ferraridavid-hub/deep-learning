@@ -3,11 +3,11 @@
 #include<stdlib.h>
 #include<math.h>
 
-#include "tlu_neuron.h"
+#include "perceptron.h"
 #include "training_set.h"
 
 
-#define TRAINING_SET_SIZE 10000000
+#define TRAINING_SET_SIZE 100000000
 
 
 void init_random_training_set(TrainingSet* ts, int seed) {
@@ -17,19 +17,17 @@ void init_random_training_set(TrainingSet* ts, int seed) {
     ts->input[i] = (double*)malloc(sizeof(double) * 2);
    }
 
-   ts->labels = (bool*)malloc(sizeof(bool) * TRAINING_SET_SIZE);
+   ts->labels = (bool**)malloc(sizeof(bool*) * 2);
+   for (size_t i = 0; i < 2; i++) {
+    ts->labels[i] = (bool*) malloc(sizeof(bool) * TRAINING_SET_SIZE);
+   }
 
-   ts->features = 2;
-
+   ts->n_features = 2;
+   ts->n_labels = 2;
    ts->size = TRAINING_SET_SIZE;
 
    for (size_t i = 0; i < TRAINING_SET_SIZE; i++) {
-       double r = (double)rand() / RAND_MAX;
-       if (r < 0.5) {
-           r *= 10;
-       } else {
-           r = 10 + 5 * r;
-       }
+       double r = (double)rand() / RAND_MAX * 20;
 
        double theta = (double)rand() / RAND_MAX * 2 * M_PI;
 
@@ -38,7 +36,8 @@ void init_random_training_set(TrainingSet* ts, int seed) {
        ts->input[i][0] = r;
        ts->input[i][1] = theta;
 
-       ts->labels[i] = r <= 10; 
+       ts->labels[0][i] = (r < 5); 
+       ts->labels[1][i] = (r >= 10);
    }
 }
 
@@ -53,43 +52,40 @@ int main(int argc, char *argv[]) {
     TrainingSet training_set;
     init_random_training_set(&training_set, 42);
     
-    print_training_set(&training_set);
+    // print_training_set(&training_set);
 
+    Perceptron perceptron;
+    init_perceptron(&perceptron);
 
-    TluNeuron perceptron;
-    init_tlu(&perceptron);
-
-    train_tlu(&perceptron, &training_set);
+    train_perceptron(&perceptron, &training_set);
 
     free_training_set(&training_set);
 
-    print_tlu(&perceptron);
-
-    bool* prevs = (bool*) malloc (sizeof(bool) * (argc - 1));
+    bool** prevs = (bool**) malloc (sizeof(bool*) * (argc - 1) / 2);
     int k = 0;
 
-    while (--argc > 0) {
+    while (argc > 1) {
 
         double x = atof(*(++argv));
         double y = atof(*(++argv));
         double input[] = {x, y};
-        bool passed = predict_tlu(&perceptron, input);
+        bool* passed = predict_perceptron(&perceptron, input);
         prevs[k++] = passed;
 
         argc -= 2;
     }
 
+    printf("Previsions (k=%d):\n", k);
+    printf("==================================\n");
     for (int i = 0; i < k; i++) {
-        printf("%d", prevs[i]);
-        if (i != k - 1) {
-            putchar(' ');
-        }
+        printf("label1: %d\tlabel2: %d", prevs[i][0], prevs[i][1]);
+        putchar('\n');
+        free(prevs[i]);
     }
-    putchar('\n');
 
     free(prevs);
 
-    free_neuron(&perceptron);
+    free_perceptron(&perceptron);
 
     return EXIT_SUCCESS;
 

@@ -7,8 +7,9 @@
 
 typedef struct {
     double** input;
-    bool* labels;
-    size_t features;
+    bool** labels;
+    size_t n_features;
+    size_t n_labels;
     size_t size;
 } TrainingSet;
 

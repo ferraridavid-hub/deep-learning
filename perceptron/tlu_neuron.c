@@ -8,22 +8,17 @@ void init_tlu(TluNeuron* neuron) {
 }
 
 
-void train_tlu(TluNeuron* neuron, TrainingSet* ts) {
-    double** input = ts->input;
-    bool* labels = ts->labels;
-    size_t ts_features = ts->features;
-    size_t ts_size = ts->size;
-
-    neuron->n_features = ts_features;
+void train_tlu(TluNeuron* neuron, size_t n_features, size_t size, double **input, bool* labels) {
+    neuron->n_features = n_features;
     neuron->weight = (double *) malloc (sizeof(double) * neuron->n_features);
 
     // for each input
-    for(size_t i = 0; i < ts_size; i++) {
+    for(size_t i = 0; i < size; i++) {
 
         double y = predict_tlu(neuron, input[i]);
 
         // adjust weights for each feature
-        for (size_t j = 0; j < ts_features; j++) {
+        for (size_t j = 0; j < n_features; j++) {
             neuron->weight[j] = neuron->weight[j] + LEARNING_RATE * (labels[i] - y) * input[i][j];
         }
 
