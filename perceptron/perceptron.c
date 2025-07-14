@@ -30,6 +30,13 @@ bool * predict_perceptron(Perceptron *p, double* input) {
 }
 
 
+void print_perceptron(Perceptron *p) {
+    for (size_t i = 0; i < p->labels; i++) {
+        print_tlu(p->output_layer + i);
+    }
+}
+
+
 void free_perceptron(Perceptron* p) {
     for (size_t i = 0; i < p->labels; i++) {
         free_neuron(p->output_layer + i);

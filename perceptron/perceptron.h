@@ -14,6 +14,7 @@ typedef struct {
 void init_perceptron(Perceptron *);
 void train_perceptron(Perceptron *, TrainingSet *);
 bool* predict_perceptron(Perceptron*, double input[]);
+void print_perceptron(Perceptron*);
 void free_perceptron(Perceptron*);
 
 
