@@ -12,8 +12,6 @@ void train_tlu(TluNeuron* neuron, size_t n_features, size_t size, double **input
     neuron->n_features = n_features;
     neuron->weight = (double *) calloc (neuron->n_features, sizeof(double));
 
-    printf("ruddy: %.2f\n", neuron->weight[761]);
-
     // for each input
     for(size_t i = 0; i < size; i++) {
 
