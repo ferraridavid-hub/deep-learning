@@ -10,7 +10,9 @@ void init_tlu(TluNeuron* neuron) {
 
 void train_tlu(TluNeuron* neuron, size_t n_features, size_t size, double **input, bool* labels) {
     neuron->n_features = n_features;
-    neuron->weight = (double *) malloc (sizeof(double) * neuron->n_features);
+    neuron->weight = (double *) calloc (neuron->n_features, sizeof(double));
+
+    printf("ruddy: %.2f\n", neuron->weight[761]);
 
     // for each input
     for(size_t i = 0; i < size; i++) {
@@ -41,7 +43,11 @@ bool predict_tlu(TluNeuron* neuron, double* input) {
 
 
 void print_tlu(TluNeuron* neuron) {
-    printf("TluNeuron:\n\tweights: w1: %f\tw2: %f\n\tbias: %f\n", neuron->weight[0], neuron->weight[1], neuron->bias);
+    printf("TluNeuron: \n\t");
+    for (size_t i = 0; i < neuron->n_features; i++) {
+        printf("\tweights: w[%zu]: %f\n",  i,  neuron->weight[i]);
+    }
+    printf("\tbias: %f\n", neuron->bias);
 }
 
 
