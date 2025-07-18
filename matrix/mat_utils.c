@@ -14,7 +14,7 @@ void mat_init_random(Matrix* m, size_t r, size_t c) {
     m->items = (double*) malloc(r * c * sizeof(double));
     for (size_t i = 0; i < r; i++) {
         for (size_t j = 0; j < c; j++) {
-            m->items[i * r + j] = (double) rand() / RAND_MAX;
+            m->items[i * c + j] = (double) rand() / RAND_MAX;
         }
     }
 }
@@ -29,7 +29,7 @@ Matrix* matmul(Matrix* a, Matrix* b) {
     for (size_t i = 0; i < a->r; i++) {
         for(size_t k = 0; k < a->c; k++) {
             for (size_t j = 0; j < b->c; j++) {
-                c->items[i * a->r + j] += a->items[i * a->r + k] * b->items[k * b->r + j];
+                c->items[i * b->c + j] += a->items[i * a->c + k] * b->items[k * b->c + j];
             }
         }
     }
@@ -46,7 +46,7 @@ void matfree(Matrix* m) {
 void matprint(Matrix* m) {
     for (size_t i = 0; i < m->r; i++) {
         for(size_t j = 0; j < m->c; j++) {
-            printf("%f ", m->items[i * m->r + j]);
+            printf("%f ", m->items[i * m->c + j]);
         }
         putchar('\n');
     }
