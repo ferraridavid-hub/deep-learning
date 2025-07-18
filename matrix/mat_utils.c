@@ -1,4 +1,5 @@
 #include "mat_utils.h"
+#include "../statistics/distribution.h"
 
 
 void mat_init_zeros(Matrix* m, size_t r, size_t c) {
@@ -14,7 +15,7 @@ void mat_init_random(Matrix* m, size_t r, size_t c) {
     m->items = (double*) malloc(r * c * sizeof(double));
     for (size_t i = 0; i < r; i++) {
         for (size_t j = 0; j < c; j++) {
-            m->items[i * c + j] = (double) rand() / RAND_MAX;
+            m->items[i * c + j] = gauss();
         }
     }
 }
@@ -35,6 +36,30 @@ Matrix* matmul(Matrix* a, Matrix* b) {
     }
 
     return c;
+}
+
+
+double mean(Matrix* m) {
+    double mean = 0;
+    for (size_t i = 0; i < m->r; i++) {
+        for (size_t j = 0; j < m->c; j++) {
+            mean += m->items[i * m->c + j];
+        }
+    }
+    return mean / (m->r * m->c);
+}
+
+
+double std(Matrix* m) {
+    double sse = 0;
+    double av = mean(m);
+
+    for (size_t i = 0; i < m->r * m->c; i++) { 
+        double item = m->items[i];
+        sse += (av - item) * (av - item);
+    }
+
+    return sqrt(sse / (m->r * m->c));
 }
 
 

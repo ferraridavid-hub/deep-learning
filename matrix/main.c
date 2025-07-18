@@ -2,27 +2,32 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "mat_utils.h"
-#include <sys/time.h>
 
 
 int main() {
     Matrix m;
-    mat_init_random(&m, 2, 2);
-    matprint(&m);
+    mat_init_random(&m, 200, 100);
+    Matrix n;
+    mat_init_random(&n, 100, 100);
 
-    struct timeval start;
-    gettimeofday(&start, NULL);
-    Matrix *c = matmul(&m, &m);
-    struct timeval end;
-    gettimeofday(&end, NULL);
+    Matrix* c = matmul(&m, &n);
+    printf("mean: %f\n", mean(c));
+    printf("std: %f\n", std(c));
 
-    uint64_t us_start = start.tv_usec + start.tv_sec * 1000000;
-    uint64_t us_end = end.tv_usec + end.tv_sec * 1000000;
+    for (int i = 0; i < 1500; i++) {
+        Matrix* t = c;
+        c = matmul(c, &n);
+        matfree(t);
+        free(t);
+        printf("mean: %f\n", mean(c));
+        printf("std: %f\n", std(c));
+    }
 
-    matprint(c);
-
-    printf("difftime: %zu\n", us_end - us_start);
+    //matprint(c);
 
     matfree(&m);
+    matfree(&n);
     matfree(c);
+    free(c);
+
 }

@@ -18,4 +18,7 @@ Matrix* matmul(Matrix*, Matrix*);
 void matfree(Matrix* m);
 void matprint(Matrix* m);
 
+double mean(Matrix* m);
+double std(Matrix* m);
+
 #endif

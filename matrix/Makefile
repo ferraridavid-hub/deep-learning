@@ -1,8 +1,8 @@
 mat_utils.o: mat_utils.c
-	gcc -c -Wall -Wextra -fsanitize=address mat_utils.c
+	gcc -c -Wall -Wextra -fsanitize=address -I ../statistics mat_utils.c
 
 main: main.c mat_utils.o
-	gcc -o main -Wall -Wextra -fsanitize=address mat_utils.o main.c
+	gcc -o main -Wall -Wextra -fsanitize=address mat_utils.o main.c ../statistics/distribution.c -lm
 
 mat_utils.prod.o: mat_utils.c
 	gcc -c -O3 -mavx mat_utils.c
