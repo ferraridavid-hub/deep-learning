@@ -8,7 +8,7 @@
 typedef struct {
     size_t r;
     size_t c;
-    double ** items;
+    double * items;
 } Matrix;
 
 void mat_init(Matrix* m, size_t r, size_t c);
